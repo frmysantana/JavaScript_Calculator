@@ -1,41 +1,109 @@
-var allClear = document.getElementById("all-clear");
-var clearEntry = document.getElementById("clear-entry");
-var digits = document.querySelectorAll(".digit");
-var decimal = document.getElementById(".");
-var operations = document.querySelectorAll(".operation");
-var output = document.getElementById("display");
+// Avoiding polluting the global namespace.
+(function () {
+  var allClear = document.getElementById("all-clear");
+  var clearEntry = document.getElementById("clear-entry");
+  var digits = document.querySelectorAll(".digit");
+  var decimal = document.getElementById(".");
+  var equals = document.getElementById("=");
+  var operations = document.querySelectorAll(".operation");
+  var output = document.getElementById("display");
+    
+  var Calculator = function() {
+    var total;
 
-allClear.addEventListener("click", function() {
-    alert("Clearing everything from the output field!");
-});
+    this.add = function(a, b) {
+      this.total = parseFloat(a, 10) + parseFloat(b, 10);
+    };
 
-clearEntry.addEventListener("click", function() {
-    alert("Clearing the last entry");
-})
+    this.subtract = function(a, b) {
+      this.total = parseFloat(a, 10) - parseFloat(b, 10);
+    };
 
-digits.forEach(function(el) {
-    el.addEventListener("click", function(e) {
-        var digitValue = e.target.innerHTML;
-        var quantity = output.textContent;
-        console.log("Type of digitValue: " + typeof(digitValue));
-        console.log("Type of quantity: " + typeof(quantity));
-        if (quantity === '0') {
-            alert("nothing in here!");
-            output.textContent = digitValue;
-        } else {
-            output.textContnet = quantity + digitValue;
-        }  
+    this.multiply = function(a, b) {
+      this.total = parseFloat(a, 10) * parseFloat(b, 10);
+    };
+
+    this.divide = function(a, b) {
+      this.total = parseFloat(a, 10) / parseFloat(b, 10);
+    };
+  };
+    
+  var page = new Calculator();
+    
+  allClear.addEventListener("click", function() {
+    output.textContent = '0';
+  });
+    
+  clearEntry.addEventListener("click", function() {
+    var expression = output.textContent;
+    var clearedExpression = expression.split(' ');
+    if (clearedExpression.length === 1) {
+      output.textContent = '0';
+    } else if (clearedExpression[clearedExpression.length - 1] === '') {
+      clearedExpression.pop(); clearedExpression.pop();
+      output.textContent = clearedExpression.join(' ');
+    } else {
+      clearedExpression.pop();
+      output.textContent = clearedExpression.join(' ') + ' ';
+    }
+  });
+    
+  digits.forEach(function(el) {
+    el.addEventListener("click", function(ev) {
+      var digitValue = ev.target.innerHTML, expression = output.textContent;
+      if (expression === '0') {
+        output.textContent = digitValue;
+      } else {
+        output.textContent = expression + digitValue;
+      }
     });
-});
-
-operations.forEach(function(el) {
-    el.addEventListener("click", function(e) {
-        var opValue = e.target.innerHTML;
-        alert('Hello from button ' + opValue + ' !');
+  });
+    
+  operations.forEach(function(el) {
+    el.addEventListener("click", function(ev) {
+      var expression = output.textContent, opValue = ev.target.innerHTML;
+      output.textContent = expression + ' ' + opValue + ' ';
     });
-});
+  });
+    
+  decimal.addEventListener("click", function() {
+    var expression = output.textContent, lastNum = expression.split(' ').pop();
+    if (lastNum.indexOf('.') === -1) {
+      output.textContent = expression + '.';
+    } else {
+      alert("Error: A number can't have more than 1 decimal point!");
+    }
+  });
+    
+  equals.addEventListener("click", function() {
+    var expression = output.textContent;
+    var willEvaluate = expression.split(' ');
+    if (Number.isNaN(parseInt(willEvaluate[willEvaluate.length -1], 10))) {
+      alert('Error: Expression must end in a number. Please complete it.');
+    } else {
+      while (willEvaluate.length > 1) {
+        var result = willEvaluate.slice(0, 3);
+        switch (result[1]) {
+          case '+':
+            page.add(result[0], result[2]);
+            willEvaluate.splice(0, 3, page.total);
+            break;
+          case '-':
+            page.subtract(result[0], result[2]);
+            willEvaluate.splice(0, 3, page.total);
+            break;
+          case '*':
+            page.multiply(result[0], result[2]);
+            willEvaluate.splice(0, 3, page.total);
+            break;
+          case '/':
+            page.divide(result[0], result[2]);
+            willEvaluate.splice(0, 3, page.total);
+            break;
+        }
+      }
 
-decimal.addEventListener("click", function() {
-    var quantity = output.textContent;
-    output.textContent = quantity + '.';
-});
+      output.textContent = willEvaluate[0];
+    }
+  });
+}());
