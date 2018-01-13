@@ -4,8 +4,9 @@
   var clearEntry = document.getElementById("clear-entry");
   var digits = document.querySelectorAll(".digit");
   var decimal = document.getElementById(".");
-  var equals = document.getElementById("=");
+  var equals = document.getElementById("equals");
   var operations = document.querySelectorAll(".operation");
+  var changeSign = document.getElementById("changeSign");
   var output = document.getElementById("display");
     
   var Calculator = function() {
@@ -68,13 +69,20 @@
     
   decimal.addEventListener("click", function() {
     var expression = output.textContent, lastNum = expression.split(' ').pop();
-    if (lastNum.indexOf('.') === -1) {
+    console.log(lastNum);
+    if (lastNum === '') {
+      output.textContent = expression + '0.';
+    } else if (lastNum.indexOf('.') === -1) {
       output.textContent = expression + '.';
     } else {
       alert("Error: A number can't have more than 1 decimal point!");
     }
   });
-    
+  
+  changeSign.addEventListener("click", function() {
+    alert('Hello');
+  });
+
   equals.addEventListener("click", function() {
     var expression = output.textContent;
     var willEvaluate = expression.split(' ');
