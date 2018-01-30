@@ -1,3 +1,3 @@
-# JavaScript_Calculator
+# JavaScript Calculator
 
-# My solution to the "Build a JavaScript Calculator" project on freeCodeCamp.
+# A calculator capable of performing simple left-to-right arithmetic.
