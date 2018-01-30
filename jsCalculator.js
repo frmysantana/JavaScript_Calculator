@@ -1,3 +1,7 @@
+/* Coded by Fremy Santana.
+   Last updated January 14, 2018.
+*/
+
 // To avoid polluting the global namespace.
 (function () {
 
